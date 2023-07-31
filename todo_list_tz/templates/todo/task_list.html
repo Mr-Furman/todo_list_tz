@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h1>Task list</h1>
+    <a href="{% url 'todo:task-create' %}" class="btn btn-primary float-right mb-3">
+      Add task
+    </a>
+
+    {% if task_list %}
+      <ul class="list-group">
+        {% for task in task_list %}
+          <li class="list-group-item">
+            <div class="row align-items-center">
+              <div class="col-md-8">
+                <h5 class="m-0">{{ task.content }}</h5>
+                <small class="text-muted">
+                  <strong>Created:</strong> {{ task.datetime }}
+                  {% if task.deadline_datetime %}
+                    | <strong>Deadline:</strong> {{ task.deadline_datetime }}
+                  {% endif %}
+                  | <strong>Tags:</strong> {% for tag in task.tags.all %}{{ tag.name }} {% endfor %}
+                </small>
+              </div>
+              <div class="col-md-4 text-right">
+                {% if task.is_done %}
+                  <a href="{% url 'todo:task-toggle-status' task.pk %}" class="btn btn-secondary">
+                    Undo
+                  </a>
+                {% else %}
+                  <a href="{% url 'todo:task-toggle-status' task.pk %}" class="btn btn-success">
+                    Complete
+                  </a>
+                {% endif %}
+                <a href="{% url 'todo:task-update' pk=task.pk %}" class="btn btn-outline-success ml-2">
+                  Update
+                </a>
+                <a href="{% url 'todo:task-delete' pk=task.pk %}" class="btn btn-outline-danger ml-2">
+                  Delete
+                </a>
+              </div>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-center mt-3">There are no tasks</p>
+    {% endif %}
+  </div>
+{% endblock %}
